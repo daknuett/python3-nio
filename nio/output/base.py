@@ -8,7 +8,7 @@ class BaseOutput(object):
 		pass
 	def print(self, *args, end = "\n", sep = " ", flush = False):
 		"""
-		Print the *args to the output device.
+		Print the ``*args`` to the output device.
 		Flush might be ignored.
 
 		Returns: None
@@ -27,7 +27,7 @@ class BaseOutput(object):
 	def clear_line(self):
 		"""
 		Clear the current line. Cannot be used to clear multiple lines.
-		Might be done using "\b" or "\r" in terminals.
+		Might be done using "\\\\b" or "\\\\r" in terminals.
 
 		Returns: None
 		"""
