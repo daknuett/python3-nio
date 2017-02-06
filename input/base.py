@@ -9,17 +9,13 @@ class BaseInput(object):
 	output might be an instance of nio.output.base.BaseOutput
 	or a simple instance like that:
 
-	::
-
-		class OutputDevice(object):
-			def __init__(self):
-				pass
-			def print(self, *args, **kwargs):
-				print(self, *args, **kw_args)
-			def line_up(self):
-				print("\r\033[A", end = "")
-
-
+	>>> class OutputDevice(object):
+	... 	def __init__(self):
+	... 		pass
+	... 	def print(self, *args, **kwargs):
+	... 		print(*args, **kw_args)
+	... 	def line_up(self):
+	... 		print("\\r\\033[A", end = "")
 	"""
 	def __init__(self, output):
 		self.output = output
@@ -33,7 +29,7 @@ class BaseInput(object):
 	async def get_char(self):
 		"""
 		Get an input character. Wait for the user to finish the input.
-		This might require a terminal "\n".
+		This might require a terminal '\\\\n'.
 
 		Returns: the character
 		"""

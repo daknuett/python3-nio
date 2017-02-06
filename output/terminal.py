@@ -1,7 +1,31 @@
 #!/usr/bin/python3
 
+"""
+Terminal output devices.
+
+There are a bunch of ANSI escape sequences that might be used by
+TerminalOutput.print_colored in ``ESCAPES``.
+
+However you should use ``colors`` for a more compatible version.
+
+Example:
+
+>>> out = TerminalOutput()
+>>> out.print_colored(ESCAPES["fg_red"], "this is a test")
+this is a test
+>>> # this was red
+>>> out.print_colored(colors["bg_blue"], "This will have a blue bg")
+This will have a blue bg
+>>> out.print_colored(colors["bg_white"] + colors["fg_black"], "This will be black on white")
+This will be black on white
+
+
+See nio.output.base for all common methods.
+"""
+
 from .base import BaseOutput, BaseBlockOutput
 import sys
+
 
 ESCAPES = {\
 "end": "\033[0m",
@@ -18,7 +42,7 @@ ESCAPES = {\
 "fg_green":   "\033[32m",
 "fg_yellow":  "\033[33m",
 "fg_blue":    "\033[34m",
-"fg_magente": "\033[35m",
+"fg_magenta": "\033[35m",
 "fg_cyan":    "\033[36m",
 "fg_white":   "\033[37m",
 
@@ -27,7 +51,7 @@ ESCAPES = {\
 "bg_green":   "\033[42m",
 "bg_yellow":  "\033[43m",
 "bg_blue":    "\033[44m",
-"bg_magente": "\033[45m",
+"bg_magenta": "\033[45m",
 "bg_cyan":    "\033[46m",
 "bg_white":   "\033[47m",
 
@@ -36,7 +60,7 @@ ESCAPES = {\
 "fg_high_green":   "\033[92m",
 "fg_high_yellow":  "\033[93m",
 "fg_high_blue":    "\033[94m",
-"fg_high_magente": "\033[95m",
+"fg_high_magenta": "\033[95m",
 "fg_high_cyan":    "\033[96m",
 "fg_high_white":   "\033[97m",
 
@@ -45,7 +69,7 @@ ESCAPES = {\
 "bg_high_green":   "\033[102m",
 "bg_high_yellow":  "\033[103m",
 "bg_high_blue":    "\033[104m",
-"bg_high_magente": "\033[105m",
+"bg_high_magenta": "\033[105m",
 "bg_high_cyan":    "\033[106m",
 "bg_high_white":   "\033[107m"
 }
@@ -56,7 +80,7 @@ colors = {\
 "fg_green":   "\033[32m",
 "fg_yellow":  "\033[33m",
 "fg_blue":    "\033[34m",
-"fg_magente": "\033[35m",
+"fg_magenta": "\033[35m",
 "fg_cyan":    "\033[36m",
 "fg_white":   "\033[37m",
 
@@ -65,7 +89,7 @@ colors = {\
 "bg_green":   "\033[42m",
 "bg_yellow":  "\033[43m",
 "bg_blue":    "\033[44m",
-"bg_magente": "\033[45m",
+"bg_magenta": "\033[45m",
 "bg_cyan":    "\033[46m",
 "bg_white":   "\033[47m",
 
@@ -74,7 +98,7 @@ colors = {\
 "fg_high_green":   "\033[92m",
 "fg_high_yellow":  "\033[93m",
 "fg_high_blue":    "\033[94m",
-"fg_high_magente": "\033[95m",
+"fg_high_magenta": "\033[95m",
 "fg_high_cyan":    "\033[96m",
 "fg_high_white":   "\033[97m",
 
@@ -83,13 +107,17 @@ colors = {\
 "bg_high_green":   "\033[102m",
 "bg_high_yellow":  "\033[103m",
 "bg_high_blue":    "\033[104m",
-"bg_high_magente": "\033[105m",
+"bg_high_magenta": "\033[105m",
 "bg_high_cyan":    "\033[106m",
 "bg_high_white":   "\033[107m"
 }
 
 
 class TerminalOutput(BaseOutput):
+	"""
+	Terminal output device.
+	Currently compatible to POSIX terminals.
+	"""
 	def __init__(self):
 		pass
 	def print(self, *args, end = "\n", sep = " ", flush = False):
@@ -112,8 +140,8 @@ class TerminalOutput(BaseOutput):
 		print(ESCAPES["end"], end = end)
 	def clear_line(self):
 		"""
-		This is a brute force approach. It will put 100 "\b" and
-		one "\r" in the hope that it will be enough.
+		This is a brute force approach. It will put 100 "\\\\b" and
+		one "\\\\r" in the hope that it will be enough.
 		"""
 		print("\b" * 100, end = "")
 		print("\r", end = "")
@@ -127,6 +155,15 @@ class TerminalOutput(BaseOutput):
 
 	
 class TerminalBlockOutput(BaseBlockOutput):
+	"""
+	A block oriented output device with 
+	``height`` lines and ``width`` characters.
+
+	*Note*: This buffers the complete output that might be visible.
+	If you want to clear this buffer, use ``TerminalBlockOutput.clear``.
+	To clear the screen without deleting the buffer use ``TerminalBlockOutput.clear_screen``.
+
+	"""
 	def __init__(self, height, width):
 		self.height = height
 		self.width = width
