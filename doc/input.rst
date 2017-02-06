@@ -1,5 +1,5 @@
-nio.input
-*********
+nuio.input
+**********
 
 .. toctree::
    :maxdepth: 2

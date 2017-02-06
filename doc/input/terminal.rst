@@ -1,6 +1,6 @@
-nio.input.terminal
-******************
+nuio.input.terminal
+*******************
 
-.. automodule:: nio.input.terminal
+.. automodule:: nuio.input.terminal
    :members:
 

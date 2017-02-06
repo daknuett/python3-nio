@@ -1,10 +1,10 @@
-.. nio documentation master file, created by
+.. nuio documentation master file, created by
    sphinx-quickstart on Mon Feb  6 13:23:42 2017.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to nio's documentation!
-===============================
+Welcome to nuio's documentation!
+================================
 
 Contents:
 

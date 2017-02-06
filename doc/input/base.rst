@@ -1,6 +1,6 @@
-nio.input.base
-**************
+nuio.input.base
+***************
 
-.. automodule:: nio.input.base
+.. automodule:: nuio.input.base
    :members:
 

@@ -1,8 +1,8 @@
-Pyton3 NIO
-**********
+Python3 NUIO
+************
 
 
-nio is an attempt to add a standardized
+nuio is an attempt to add a standardized
 and easy-to-use user input/output interface for python.
 
 The goal is to provide a set of classes with *print-alike-operating* methods
@@ -11,13 +11,13 @@ and a few other methods for markup & co to deal with user input/output.
 Features
 ========
 
-Currently nio is able to eal with POSIX Terminals.
-The corresponding classes are in ``nio.input.terminal`` and ``nio.output.terminal``.
+Currently nuio is able to eal with POSIX Terminals.
+The corresponding classes are in ``nuio.input.terminal`` and ``nio.output.terminal``.
 
 Philosopy
 =========
 
-nio tries to keep stuff as simple as possible,
+nuio tries to keep stuff as simple as possible,
 but it requires python3.5.1+ language features.
 
 Any blocking user-input is done using async features, this
@@ -38,14 +38,14 @@ The following features should be added:
 Example
 =======
 
-This is a simple example for nio:
+This is a simple example for nuio:
 
 ::
 
 	#!/usr/bin/python3
 
-	from nio.input.terminal import POSIXTerminalInput
-	from nio.output.terminal import TerminalOutput, ESCAPES, TerminalBlockOutput
+	from nuio.input.terminal import POSIXTerminalInput
+	from nuio.output.terminal import TerminalOutput, ESCAPES, TerminalBlockOutput
 	import asyncio, shutil
 
 
@@ -62,7 +62,7 @@ This is a simple example for nio:
 		data = await inp.input_int(prompt = "enter an integer > ")
 
 		# You are able to use a bunch of ANSI escape sequences.
-		# Usually you should use nio.output.terminal.colors instead,
+		# Usually you should use nuio.output.terminal.colors instead,
 		# this will be compatible with other output devices.
 
 		out.print_colored(ESCAPES["underline"], "you entered:", data)

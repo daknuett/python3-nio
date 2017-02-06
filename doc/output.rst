@@ -1,5 +1,5 @@
-nio.output
-**********
+nuio.output
+***********
 
 .. toctree::
    :maxdepth: 2

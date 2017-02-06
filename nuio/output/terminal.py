@@ -20,7 +20,7 @@ This will have a blue bg
 This will be black on white
 
 
-See nio.output.base for all common methods.
+See nuio.output.base for all common methods.
 """
 
 from .base import BaseOutput, BaseBlockOutput

@@ -1,7 +1,7 @@
-nio.output.base
-***************
+nuio.output.base
+****************
 
-.. automodule:: nio.output.base
+.. automodule:: nuio.output.base
    :members:
 
 

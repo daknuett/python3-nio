@@ -4,7 +4,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="Docutils 0.12: http://docutils.sourceforge.net/" />
-<title>Pyton3 NIO</title>
+<title>Python3 NUIO</title>
 <style type="text/css">
 
 /*
@@ -338,21 +338,21 @@ ul.auto-toc {
 </style>
 </head>
 <body>
-<div class="document" id="pyton3-nio">
-<h1 class="title">Pyton3 NIO</h1>
+<div class="document" id="python3-nuio">
+<h1 class="title">Python3 NUIO</h1>
 
-<p>nio is an attempt to add a standardized
+<p>nuio is an attempt to add a standardized
 and easy-to-use user input/output interface for python.</p>
 <p>The goal is to provide a set of classes with <em>print-alike-operating</em> methods
 and a few other methods for markup &amp; co to deal with user input/output.</p>
 <div class="section" id="features">
 <h1>Features</h1>
-<p>Currently nio is able to eal with POSIX Terminals.
-The corresponding classes are in <tt class="docutils literal">nio.input.terminal</tt> and <tt class="docutils literal">nio.output.terminal</tt>.</p>
+<p>Currently nuio is able to eal with POSIX Terminals.
+The corresponding classes are in <tt class="docutils literal">nuio.input.terminal</tt> and <tt class="docutils literal">nio.output.terminal</tt>.</p>
 </div>
 <div class="section" id="philosopy">
 <h1>Philosopy</h1>
-<p>nio tries to keep stuff as simple as possible,
+<p>nuio tries to keep stuff as simple as possible,
 but it requires python3.5.1+ language features.</p>
 <p>Any blocking user-input is done using async features, this
 will become handy in future.</p>
@@ -369,12 +369,12 @@ will become handy in future.</p>
 </div>
 <div class="section" id="example">
 <h1>Example</h1>
-<p>This is a simple example for nio:</p>
+<p>This is a simple example for nuio:</p>
 <pre class="literal-block">
 #!/usr/bin/python3
 
-from nio.input.terminal import POSIXTerminalInput
-from nio.output.terminal import TerminalOutput, ESCAPES, TerminalBlockOutput
+from nuio.input.terminal import POSIXTerminalInput
+from nuio.output.terminal import TerminalOutput, ESCAPES, TerminalBlockOutput
 import asyncio, shutil
 
 
@@ -391,7 +391,7 @@ async def main():
         data = await inp.input_int(prompt = &quot;enter an integer &gt; &quot;)
 
         # You are able to use a bunch of ANSI escape sequences.
-        # Usually you should use nio.output.terminal.colors instead,
+        # Usually you should use nuio.output.terminal.colors instead,
         # this will be compatible with other output devices.
 
         out.print_colored(ESCAPES[&quot;underline&quot;], &quot;you entered:&quot;, data)
