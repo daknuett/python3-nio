@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>nuio.input.terminal &mdash; nuio 0.0.2a documentation</title>
+    <title>nuio.input.terminal &mdash; nuio 0.0.3a documentation</title>
     
     <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '0.0.2a',
+        VERSION:     '0.0.3a',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="nuio 0.0.2a documentation" href="../../../index.html" />
+    <link rel="top" title="nuio 0.0.3a documentation" href="../../../index.html" />
     <link rel="up" title="Module code" href="../../index.html" />
    
   
@@ -145,7 +145,7 @@
 
 	<span class="n">async</span> <span class="k">def</span> <span class="nf">input_char</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prompt</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">):</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="k">print</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">flush</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
-		<span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stdin</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+		<span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stdin</span><span class="o">.</span><span class="n">readline</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">line_up</span><span class="p">()</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="k">print</span><span class="p">(</span><span class="n">prompt</span> <span class="o">+</span> <span class="n">res</span><span class="p">,</span> <span class="n">flush</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
 		<span class="k">return</span> <span class="n">res</span>
