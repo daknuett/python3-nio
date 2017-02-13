@@ -103,10 +103,10 @@ class POSIXTerminalInput(BaseInput):
 		return last_char
 
 	async def input_char(self, prompt = ""):
-		self.output.print(prompt, end = "")
+		self.output.print(prompt, end = "", flush = True)
 		res = self.stdin.read(1)
 		self.output.line_up()
-		self.output.print(prompt + res)
+		self.output.print(prompt + res, flush = True)
 		return res
 
 	async def input_string(self, prompt = ""):
@@ -114,10 +114,10 @@ class POSIXTerminalInput(BaseInput):
 		Sets ICANON and ECHO and prompts the user to enter a string.
 		"""
 		self.reset_tc_attrs()
-		self.output.print(prompt, end = "")
+		self.output.print(prompt, end = "", flush = True)
 		res = self.stdin.readline()
 		self.output.line_up()
-		self.output.print(prompt + res)
+		self.output.print(prompt + res, flush = True)
 		return res
 	async def input_int(self, prompt = "", range = None):
 		"""

@@ -137,7 +137,7 @@ class TerminalOutput(BaseOutput):
 		"""
 		print(color, end = "")
 		print(*args, end = "", sep = sep, flush = flush)
-		print(ESCAPES["end"], end = end)
+		print(ESCAPES["end"], end = end, flush = flush)
 	def clear_line(self):
 		"""
 		This is a brute force approach. It will put 100 "\\\\b" and
