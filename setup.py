@@ -14,7 +14,7 @@ with open(path.join(here, 'README.rst')) as f:
 
 setup(
 	name = "nuio",
-	version = "0.0.1",
+	version = "0.0.2",
 	description = "A user I/O handler",
 	long_description = long_description,
 	url = "https://github.com/daknuett/python3-nuio",
