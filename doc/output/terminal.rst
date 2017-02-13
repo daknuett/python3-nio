@@ -1,7 +1,7 @@
-nio.output.terminal
-*******************
+nuio.output.terminal
+********************
 
-.. automodule:: nio.output.terminal
+.. automodule:: nuio.output.terminal
    :members:
 
 

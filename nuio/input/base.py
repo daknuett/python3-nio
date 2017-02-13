@@ -6,7 +6,7 @@ class BaseInput(object):
 
 	output is used to prompt the user for input.
 
-	output might be an instance of nio.output.base.BaseOutput
+	output might be an instance of nuio.output.base.BaseOutput
 	or a simple instance like that:
 
 	>>> class OutputDevice(object):
