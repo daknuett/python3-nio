@@ -104,7 +104,7 @@ class POSIXTerminalInput(BaseInput):
 
 	async def input_char(self, prompt = ""):
 		self.output.print(prompt, end = "", flush = True)
-		res = self.stdin.read(1)
+		res = self.stdin.readline()[0]
 		self.output.line_up()
 		self.output.print(prompt + res, flush = True)
 		return res
