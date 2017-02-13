@@ -1,0 +1,193 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>nuio.input.base &mdash; nuio 0.0.2a documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.0.2a',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="nuio 0.0.2a documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for nuio.input.base</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/python3</span>
+
+<div class="viewcode-block" id="BaseInput"><a class="viewcode-back" href="../../../input/base.html#nuio.input.base.BaseInput">[docs]</a><span class="k">class</span> <span class="nc">BaseInput</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Base input class. Used to get user input.</span>
+
+<span class="sd">	output is used to prompt the user for input.</span>
+
+<span class="sd">	output might be an instance of nuio.output.base.BaseOutput</span>
+<span class="sd">	or a simple instance like that:</span>
+
+<span class="sd">	&gt;&gt;&gt; class OutputDevice(object):</span>
+<span class="sd">	... 	def __init__(self):</span>
+<span class="sd">	... 		pass</span>
+<span class="sd">	... 	def print(self, *args, **kwargs):</span>
+<span class="sd">	... 		print(*args, **kw_args)</span>
+<span class="sd">	... 	def line_up(self):</span>
+<span class="sd">	... 		print(&quot;\\r\\033[A&quot;, end = &quot;&quot;)</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">=</span> <span class="n">output</span>
+<div class="viewcode-block" id="BaseInput.get_string"><a class="viewcode-back" href="../../../input/base.html#nuio.input.base.BaseInput.get_string">[docs]</a>	<span class="n">async</span> <span class="k">def</span> <span class="nf">get_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Get an input string. Wait for the user to finish the input.</span>
+
+<span class="sd">		Returns: the string</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">pass</span></div>
+<div class="viewcode-block" id="BaseInput.get_char"><a class="viewcode-back" href="../../../input/base.html#nuio.input.base.BaseInput.get_char">[docs]</a>	<span class="n">async</span> <span class="k">def</span> <span class="nf">get_char</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Get an input character. Wait for the user to finish the input.</span>
+<span class="sd">		This might require a terminal &#39;\\\\n&#39;.</span>
+
+<span class="sd">		Returns: the character</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">pass</span></div>
+<div class="viewcode-block" id="BaseInput.get_char_noblock"><a class="viewcode-back" href="../../../input/base.html#nuio.input.base.BaseInput.get_char_noblock">[docs]</a>	<span class="k">def</span> <span class="nf">get_char_noblock</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Get an input character. Do not wait for the user to finish the input.</span>
+<span class="sd">		Might set the terminal to ``~ICANON`` and ``~ECHO``.</span>
+<span class="sd">		This will return the first character.</span>
+
+<span class="sd">		Returns: character or None</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">pass</span></div>
+<div class="viewcode-block" id="BaseInput.get_last_char_noblock"><a class="viewcode-back" href="../../../input/base.html#nuio.input.base.BaseInput.get_last_char_noblock">[docs]</a>	<span class="k">def</span> <span class="nf">get_last_char_noblock</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Just like get_char_noblock, but this will return the last character.</span>
+
+<span class="sd">		Returns: character or None</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">pass</span></div>
+
+<div class="viewcode-block" id="BaseInput.input_char"><a class="viewcode-back" href="../../../input/base.html#nuio.input.base.BaseInput.input_char">[docs]</a>	<span class="n">async</span> <span class="k">def</span> <span class="nf">input_char</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prompt</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Prompt the user to enter a character.</span>
+
+<span class="sd">		Returns: the character</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">pass</span></div>
+<div class="viewcode-block" id="BaseInput.input_string"><a class="viewcode-back" href="../../../input/base.html#nuio.input.base.BaseInput.input_string">[docs]</a>	<span class="n">async</span> <span class="k">def</span> <span class="nf">input_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prompt</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Prompt the user to enter a string.</span>
+
+<span class="sd">		Returns: the string</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">pass</span></div>
+<div class="viewcode-block" id="BaseInput.input_int"><a class="viewcode-back" href="../../../input/base.html#nuio.input.base.BaseInput.input_int">[docs]</a>	<span class="n">async</span> <span class="k">def</span> <span class="nf">input_int</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prompt</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="nb">range</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Prompt the user to enter an integer.</span>
+<span class="sd">		It will loop until the entered integer is valid.</span>
+
+<span class="sd">		Returns: the integer</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">pass</span></div>
+<div class="viewcode-block" id="BaseInput.input_float"><a class="viewcode-back" href="../../../input/base.html#nuio.input.base.BaseInput.input_float">[docs]</a>	<span class="n">async</span> <span class="k">def</span> <span class="nf">input_float</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prompt</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="nb">range</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Prompt the User to enter a float.</span>
+<span class="sd">		It will loop until the entered float is valid.</span>
+
+<span class="sd">		Returns: the float</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">pass</span></div>
+
+<div class="viewcode-block" id="BaseInput.input_type"><a class="viewcode-back" href="../../../input/base.html#nuio.input.base.BaseInput.input_type">[docs]</a>	<span class="n">async</span> <span class="k">def</span> <span class="nf">input_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">constructor</span><span class="p">,</span> <span class="n">prompt</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">):</span>	
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Promt the user to enter a custom type.</span>
+<span class="sd">		This will loop until the constructor returns</span>
+<span class="sd">		something not-None and raises no exceptions.</span>
+
+<span class="sd">		Example:</span>
+
+<span class="sd">		&gt;&gt;&gt; i = BaseInput()</span>
+<span class="sd">		&gt;&gt;&gt; def get_positive_integer(string):</span>
+<span class="sd">			i = int(string)</span>
+<span class="sd">			if(i &gt; 0):</span>
+<span class="sd">				return i</span>
+<span class="sd">			return None</span>
+<span class="sd">		&gt;&gt;&gt; i.input_type(get_positive_integer, prompt = &quot;enter a positive integer &gt; &quot;)	</span>
+
+<span class="sd">		Returns: Instance of the custom type</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">pass</span></div></div>
+		
+		
+	
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Daniel Knüttel.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

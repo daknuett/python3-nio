@@ -1,0 +1,200 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>nuio.output.terminal &mdash; nuio 0.0.2a documentation</title>
+    
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.0.2a',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="nuio 0.0.2a documentation" href="../index.html" />
+    <link rel="up" title="nuio.output" href="../output.html" />
+    <link rel="prev" title="nuio.output.base" href="base.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-nuio.output.terminal">
+<span id="nuio-output-terminal"></span><h1>nuio.output.terminal<a class="headerlink" href="#module-nuio.output.terminal" title="Permalink to this headline">¶</a></h1>
+<p>Terminal output devices.</p>
+<p>There are a bunch of ANSI escape sequences that might be used by
+TerminalOutput.print_colored in <code class="docutils literal"><span class="pre">ESCAPES</span></code>.</p>
+<p>However you should use <code class="docutils literal"><span class="pre">colors</span></code> for a more compatible version.</p>
+<p>Example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">out</span> <span class="o">=</span> <span class="n">TerminalOutput</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">out</span><span class="o">.</span><span class="n">print_colored</span><span class="p">(</span><span class="n">ESCAPES</span><span class="p">[</span><span class="s2">&quot;fg_red&quot;</span><span class="p">],</span> <span class="s2">&quot;this is a test&quot;</span><span class="p">)</span>
+<span class="go">this is a test</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># this was red</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">out</span><span class="o">.</span><span class="n">print_colored</span><span class="p">(</span><span class="n">colors</span><span class="p">[</span><span class="s2">&quot;bg_blue&quot;</span><span class="p">],</span> <span class="s2">&quot;This will have a blue bg&quot;</span><span class="p">)</span>
+<span class="go">This will have a blue bg</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">out</span><span class="o">.</span><span class="n">print_colored</span><span class="p">(</span><span class="n">colors</span><span class="p">[</span><span class="s2">&quot;bg_white&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">colors</span><span class="p">[</span><span class="s2">&quot;fg_black&quot;</span><span class="p">],</span> <span class="s2">&quot;This will be black on white&quot;</span><span class="p">)</span>
+<span class="go">This will be black on white</span>
+</pre></div>
+</div>
+<p>See nuio.output.base for all common methods.</p>
+<dl class="class">
+<dt id="nuio.output.terminal.TerminalBlockOutput">
+<em class="property">class </em><code class="descclassname">nuio.output.terminal.</code><code class="descname">TerminalBlockOutput</code><span class="sig-paren">(</span><em>height</em>, <em>width</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nuio/output/terminal.html#TerminalBlockOutput"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nuio.output.terminal.TerminalBlockOutput" title="Permalink to this definition">¶</a></dt>
+<dd><p>A block oriented output device with 
+<code class="docutils literal"><span class="pre">height</span></code> lines and <code class="docutils literal"><span class="pre">width</span></code> characters.</p>
+<p><em>Note</em>: This buffers the complete output that might be visible.
+If you want to clear this buffer, use <code class="docutils literal"><span class="pre">TerminalBlockOutput.clear</span></code>.
+To clear the screen without deleting the buffer use <code class="docutils literal"><span class="pre">TerminalBlockOutput.clear_screen</span></code>.</p>
+<dl class="method">
+<dt id="nuio.output.terminal.TerminalBlockOutput.clear">
+<code class="descname">clear</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nuio/output/terminal.html#TerminalBlockOutput.clear"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nuio.output.terminal.TerminalBlockOutput.clear" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clear the complete block.</p>
+<p>Returns: None</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="nuio.output.terminal.TerminalBlockOutput.clear_line">
+<code class="descname">clear_line</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nuio/output/terminal.html#TerminalBlockOutput.clear_line"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nuio.output.terminal.TerminalBlockOutput.clear_line" title="Permalink to this definition">¶</a></dt>
+<dd><p>Will clear the current line</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="nuio.output.terminal.TerminalBlockOutput.clear_screen">
+<code class="descname">clear_screen</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nuio/output/terminal.html#TerminalBlockOutput.clear_screen"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nuio.output.terminal.TerminalBlockOutput.clear_screen" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clear the complete screen.</p>
+<p>Returns: None</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="nuio.output.terminal.TerminalBlockOutput.goto_line">
+<code class="descname">goto_line</code><span class="sig-paren">(</span><em>lineno</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nuio/output/terminal.html#TerminalBlockOutput.goto_line"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nuio.output.terminal.TerminalBlockOutput.goto_line" title="Permalink to this definition">¶</a></dt>
+<dd><p>Go to line <code class="docutils literal"><span class="pre">lineno</span></code>. Might raise an exception, if lineno is invalid.
+Will place the cursor at the first character in this line to prevent 
+undefined behaviour.</p>
+<p>Returns: None</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="nuio.output.terminal.TerminalBlockOutput.print">
+<code class="descname">print</code><span class="sig-paren">(</span><em>*args</em>, <em>end='\n'</em>, <em>sep=' '</em>, <em>flush=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nuio/output/terminal.html#TerminalBlockOutput.print"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nuio.output.terminal.TerminalBlockOutput.print" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias of print_autowrap.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="nuio.output.terminal.TerminalBlockOutput.print_autowrap">
+<code class="descname">print_autowrap</code><span class="sig-paren">(</span><em>*args</em>, <em>end='\n'</em>, <em>sep=' '</em>, <em>flush=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nuio/output/terminal.html#TerminalBlockOutput.print_autowrap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nuio.output.terminal.TerminalBlockOutput.print_autowrap" title="Permalink to this definition">¶</a></dt>
+<dd><p>This will break lines, if they are too long
+and scroll lines if there are too many lines for the 
+block.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="nuio.output.terminal.TerminalBlockOutput.print_colored">
+<code class="descname">print_colored</code><span class="sig-paren">(</span><em>color</em>, <em>*args</em>, <em>end='\n'</em>, <em>sep=' '</em>, <em>flush=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nuio/output/terminal.html#TerminalBlockOutput.print_colored"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nuio.output.terminal.TerminalBlockOutput.print_colored" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds <code class="docutils literal"><span class="pre">color</span></code> and <code class="docutils literal"><span class="pre">ESCAPES[&quot;end&quot;]</span></code> to the args and invokes
+print_autowrap.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="nuio.output.terminal.TerminalOutput">
+<em class="property">class </em><code class="descclassname">nuio.output.terminal.</code><code class="descname">TerminalOutput</code><a class="reference internal" href="../_modules/nuio/output/terminal.html#TerminalOutput"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nuio.output.terminal.TerminalOutput" title="Permalink to this definition">¶</a></dt>
+<dd><p>Terminal output device.
+Currently compatible to POSIX terminals.</p>
+<dl class="method">
+<dt id="nuio.output.terminal.TerminalOutput.clear_line">
+<code class="descname">clear_line</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nuio/output/terminal.html#TerminalOutput.clear_line"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nuio.output.terminal.TerminalOutput.clear_line" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is a brute force approach. It will put 100 &#8220;\b&#8221; and
+one &#8220;\r&#8221; in the hope that it will be enough.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="nuio.output.terminal.TerminalOutput.print_colored">
+<code class="descname">print_colored</code><span class="sig-paren">(</span><em>color</em>, <em>*args</em>, <em>end='\n'</em>, <em>sep=' '</em>, <em>flush=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nuio/output/terminal.html#TerminalOutput.print_colored"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nuio.output.terminal.TerminalOutput.print_colored" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print some colored text to the terminal. Actually you are able to
+use any ASCII escape sequence.</p>
+<p>All colors are in the dict <code class="docutils literal"><span class="pre">colors</span></code>. All used escape sequences are in <code class="docutils literal"><span class="pre">ESCAPES</span></code>.</p>
+<p>Returns: None</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../output.html">nuio.output</a><ul>
+      <li>Previous: <a href="base.html" title="previous chapter">nuio.output.base</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/output/terminal.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Daniel Knüttel.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
+      
+      |
+      <a href="../_sources/output/terminal.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

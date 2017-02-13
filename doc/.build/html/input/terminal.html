@@ -1,0 +1,176 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>nuio.input.terminal &mdash; nuio 0.0.2a documentation</title>
+    
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.0.2a',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="nuio 0.0.2a documentation" href="../index.html" />
+    <link rel="up" title="nuio.input" href="../input.html" />
+    <link rel="next" title="nuio.output" href="../output.html" />
+    <link rel="prev" title="nuio.input.base" href="base.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-nuio.input.terminal">
+<span id="nuio-input-terminal"></span><h1>nuio.input.terminal<a class="headerlink" href="#module-nuio.input.terminal" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="nuio.input.terminal.POSIXTerminalInput">
+<em class="property">class </em><code class="descclassname">nuio.input.terminal.</code><code class="descname">POSIXTerminalInput</code><span class="sig-paren">(</span><em>output</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nuio/input/terminal.html#POSIXTerminalInput"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nuio.input.terminal.POSIXTerminalInput" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get input from a POSIX Terminal/Shell.
+This requires that the terminal can be set to ~ICANON and ~ECHO
+by using termios.</p>
+<p>Some methods will set the correct terminal settings automatically,
+anyways you should set them manually at first.</p>
+<p>All input_* methods, get_string and get_char will require ICANON and ECHO to be set.
+To prevent unpredictable behaviour you should <code class="docutils literal"><span class="pre">reset_tc_attrs</span></code>
+before running them.</p>
+<p>get_char_noblock and get_last_char_noblock will require ~ICANON.
+You should ensure to turn it off after you called them if you need
+ICANON.</p>
+<dl class="method">
+<dt id="nuio.input.terminal.POSIXTerminalInput.get_char_noblock">
+<code class="descname">get_char_noblock</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nuio/input/terminal.html#POSIXTerminalInput.get_char_noblock"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nuio.input.terminal.POSIXTerminalInput.get_char_noblock" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets ~ICANON and reads one char nonblocking.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="nuio.input.terminal.POSIXTerminalInput.get_last_char_noblock">
+<code class="descname">get_last_char_noblock</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nuio/input/terminal.html#POSIXTerminalInput.get_last_char_noblock"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nuio.input.terminal.POSIXTerminalInput.get_last_char_noblock" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets ~ICANON and reads the last entered char nonblocking.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="nuio.input.terminal.POSIXTerminalInput.get_string">
+<code class="descname">get_string</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nuio/input/terminal.html#POSIXTerminalInput.get_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nuio.input.terminal.POSIXTerminalInput.get_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resets the terminal attributes and returns input()</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="nuio.input.terminal.POSIXTerminalInput.input_float">
+<code class="descname">input_float</code><span class="sig-paren">(</span><em>prompt=''</em>, <em>range=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nuio/input/terminal.html#POSIXTerminalInput.input_float"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nuio.input.terminal.POSIXTerminalInput.input_float" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uses input_string internally.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="nuio.input.terminal.POSIXTerminalInput.input_int">
+<code class="descname">input_int</code><span class="sig-paren">(</span><em>prompt=''</em>, <em>range=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nuio/input/terminal.html#POSIXTerminalInput.input_int"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nuio.input.terminal.POSIXTerminalInput.input_int" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uses input_string internally.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="nuio.input.terminal.POSIXTerminalInput.input_string">
+<code class="descname">input_string</code><span class="sig-paren">(</span><em>prompt=''</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nuio/input/terminal.html#POSIXTerminalInput.input_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nuio.input.terminal.POSIXTerminalInput.input_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets ICANON and ECHO and prompts the user to enter a string.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="nuio.input.terminal.POSIXTerminalInput.reset_tc_attrs">
+<code class="descname">reset_tc_attrs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nuio/input/terminal.html#POSIXTerminalInput.reset_tc_attrs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nuio.input.terminal.POSIXTerminalInput.reset_tc_attrs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset the terminal settings to the original settings</p>
+<p>Returns: None</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="nuio.input.terminal.POSIXTerminalInput.set_noECHO">
+<code class="descname">set_noECHO</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nuio/input/terminal.html#POSIXTerminalInput.set_noECHO"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nuio.input.terminal.POSIXTerminalInput.set_noECHO" title="Permalink to this definition">¶</a></dt>
+<dd><p>Disable ECHO in the terminal</p>
+<p>Returns: None</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="nuio.input.terminal.POSIXTerminalInput.set_noICANON">
+<code class="descname">set_noICANON</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nuio/input/terminal.html#POSIXTerminalInput.set_noICANON"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nuio.input.terminal.POSIXTerminalInput.set_noICANON" title="Permalink to this definition">¶</a></dt>
+<dd><p>Disable ICANON in the terminal</p>
+<p>Returns: None</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../input.html">nuio.input</a><ul>
+      <li>Previous: <a href="base.html" title="previous chapter">nuio.input.base</a></li>
+      <li>Next: <a href="../output.html" title="next chapter">nuio.output</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/input/terminal.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Daniel Knüttel.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
+      
+      |
+      <a href="../_sources/input/terminal.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

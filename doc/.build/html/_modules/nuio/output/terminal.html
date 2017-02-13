@@ -1,0 +1,355 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>nuio.output.terminal &mdash; nuio 0.0.2a documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.0.2a',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="nuio 0.0.2a documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for nuio.output.terminal</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/python3</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Terminal output devices.</span>
+
+<span class="sd">There are a bunch of ANSI escape sequences that might be used by</span>
+<span class="sd">TerminalOutput.print_colored in ``ESCAPES``.</span>
+
+<span class="sd">However you should use ``colors`` for a more compatible version.</span>
+
+<span class="sd">Example:</span>
+
+<span class="sd">&gt;&gt;&gt; out = TerminalOutput()</span>
+<span class="sd">&gt;&gt;&gt; out.print_colored(ESCAPES[&quot;fg_red&quot;], &quot;this is a test&quot;)</span>
+<span class="sd">this is a test</span>
+<span class="sd">&gt;&gt;&gt; # this was red</span>
+<span class="sd">&gt;&gt;&gt; out.print_colored(colors[&quot;bg_blue&quot;], &quot;This will have a blue bg&quot;)</span>
+<span class="sd">This will have a blue bg</span>
+<span class="sd">&gt;&gt;&gt; out.print_colored(colors[&quot;bg_white&quot;] + colors[&quot;fg_black&quot;], &quot;This will be black on white&quot;)</span>
+<span class="sd">This will be black on white</span>
+
+
+<span class="sd">See nuio.output.base for all common methods.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">BaseOutput</span><span class="p">,</span> <span class="n">BaseBlockOutput</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+
+<span class="n">ESCAPES</span> <span class="o">=</span> <span class="p">{</span>\
+<span class="s2">&quot;end&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[0m&quot;</span><span class="p">,</span>
+<span class="s2">&quot;bold&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[1m&quot;</span><span class="p">,</span>
+<span class="s2">&quot;faint&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[2m&quot;</span><span class="p">,</span>
+<span class="s2">&quot;italic&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[3m&quot;</span><span class="p">,</span>
+<span class="s2">&quot;underline&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[4m&quot;</span><span class="p">,</span>
+<span class="s2">&quot;framed&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[51m&quot;</span><span class="p">,</span>
+<span class="s2">&quot;encircled&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[52m&quot;</span><span class="p">,</span>
+
+
+<span class="s2">&quot;fg_black&quot;</span><span class="p">:</span>   <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[30m&quot;</span><span class="p">,</span>
+<span class="s2">&quot;fg_red&quot;</span><span class="p">:</span>     <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[31m&quot;</span><span class="p">,</span>
+<span class="s2">&quot;fg_green&quot;</span><span class="p">:</span>   <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[32m&quot;</span><span class="p">,</span>
+<span class="s2">&quot;fg_yellow&quot;</span><span class="p">:</span>  <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[33m&quot;</span><span class="p">,</span>
+<span class="s2">&quot;fg_blue&quot;</span><span class="p">:</span>    <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[34m&quot;</span><span class="p">,</span>
+<span class="s2">&quot;fg_magenta&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[35m&quot;</span><span class="p">,</span>
+<span class="s2">&quot;fg_cyan&quot;</span><span class="p">:</span>    <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[36m&quot;</span><span class="p">,</span>
+<span class="s2">&quot;fg_white&quot;</span><span class="p">:</span>   <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[37m&quot;</span><span class="p">,</span>
+
+<span class="s2">&quot;bg_black&quot;</span><span class="p">:</span>   <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[40m&quot;</span><span class="p">,</span>
+<span class="s2">&quot;bg_red&quot;</span><span class="p">:</span>     <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[41m&quot;</span><span class="p">,</span>
+<span class="s2">&quot;bg_green&quot;</span><span class="p">:</span>   <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[42m&quot;</span><span class="p">,</span>
+<span class="s2">&quot;bg_yellow&quot;</span><span class="p">:</span>  <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[43m&quot;</span><span class="p">,</span>
+<span class="s2">&quot;bg_blue&quot;</span><span class="p">:</span>    <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[44m&quot;</span><span class="p">,</span>
+<span class="s2">&quot;bg_magenta&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[45m&quot;</span><span class="p">,</span>
+<span class="s2">&quot;bg_cyan&quot;</span><span class="p">:</span>    <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[46m&quot;</span><span class="p">,</span>
+<span class="s2">&quot;bg_white&quot;</span><span class="p">:</span>   <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[47m&quot;</span><span class="p">,</span>
+
+<span class="s2">&quot;fg_high_black&quot;</span><span class="p">:</span>   <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[90m&quot;</span><span class="p">,</span>
+<span class="s2">&quot;fg_high_red&quot;</span><span class="p">:</span>     <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[91m&quot;</span><span class="p">,</span>
+<span class="s2">&quot;fg_high_green&quot;</span><span class="p">:</span>   <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[92m&quot;</span><span class="p">,</span>
+<span class="s2">&quot;fg_high_yellow&quot;</span><span class="p">:</span>  <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[93m&quot;</span><span class="p">,</span>
+<span class="s2">&quot;fg_high_blue&quot;</span><span class="p">:</span>    <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[94m&quot;</span><span class="p">,</span>
+<span class="s2">&quot;fg_high_magenta&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[95m&quot;</span><span class="p">,</span>
+<span class="s2">&quot;fg_high_cyan&quot;</span><span class="p">:</span>    <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[96m&quot;</span><span class="p">,</span>
+<span class="s2">&quot;fg_high_white&quot;</span><span class="p">:</span>   <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[97m&quot;</span><span class="p">,</span>
+
+<span class="s2">&quot;bg_high_black&quot;</span><span class="p">:</span>   <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[100m&quot;</span><span class="p">,</span>
+<span class="s2">&quot;bg_high_red&quot;</span><span class="p">:</span>     <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[101m&quot;</span><span class="p">,</span>
+<span class="s2">&quot;bg_high_green&quot;</span><span class="p">:</span>   <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[102m&quot;</span><span class="p">,</span>
+<span class="s2">&quot;bg_high_yellow&quot;</span><span class="p">:</span>  <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[103m&quot;</span><span class="p">,</span>
+<span class="s2">&quot;bg_high_blue&quot;</span><span class="p">:</span>    <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[104m&quot;</span><span class="p">,</span>
+<span class="s2">&quot;bg_high_magenta&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[105m&quot;</span><span class="p">,</span>
+<span class="s2">&quot;bg_high_cyan&quot;</span><span class="p">:</span>    <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[106m&quot;</span><span class="p">,</span>
+<span class="s2">&quot;bg_high_white&quot;</span><span class="p">:</span>   <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[107m&quot;</span>
+<span class="p">}</span>
+
+<span class="n">colors</span> <span class="o">=</span> <span class="p">{</span>\
+<span class="s2">&quot;fg_black&quot;</span><span class="p">:</span>   <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[30m&quot;</span><span class="p">,</span>
+<span class="s2">&quot;fg_red&quot;</span><span class="p">:</span>     <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[31m&quot;</span><span class="p">,</span>
+<span class="s2">&quot;fg_green&quot;</span><span class="p">:</span>   <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[32m&quot;</span><span class="p">,</span>
+<span class="s2">&quot;fg_yellow&quot;</span><span class="p">:</span>  <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[33m&quot;</span><span class="p">,</span>
+<span class="s2">&quot;fg_blue&quot;</span><span class="p">:</span>    <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[34m&quot;</span><span class="p">,</span>
+<span class="s2">&quot;fg_magenta&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[35m&quot;</span><span class="p">,</span>
+<span class="s2">&quot;fg_cyan&quot;</span><span class="p">:</span>    <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[36m&quot;</span><span class="p">,</span>
+<span class="s2">&quot;fg_white&quot;</span><span class="p">:</span>   <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[37m&quot;</span><span class="p">,</span>
+
+<span class="s2">&quot;bg_black&quot;</span><span class="p">:</span>   <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[40m&quot;</span><span class="p">,</span>
+<span class="s2">&quot;bg_red&quot;</span><span class="p">:</span>     <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[41m&quot;</span><span class="p">,</span>
+<span class="s2">&quot;bg_green&quot;</span><span class="p">:</span>   <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[42m&quot;</span><span class="p">,</span>
+<span class="s2">&quot;bg_yellow&quot;</span><span class="p">:</span>  <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[43m&quot;</span><span class="p">,</span>
+<span class="s2">&quot;bg_blue&quot;</span><span class="p">:</span>    <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[44m&quot;</span><span class="p">,</span>
+<span class="s2">&quot;bg_magenta&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[45m&quot;</span><span class="p">,</span>
+<span class="s2">&quot;bg_cyan&quot;</span><span class="p">:</span>    <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[46m&quot;</span><span class="p">,</span>
+<span class="s2">&quot;bg_white&quot;</span><span class="p">:</span>   <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[47m&quot;</span><span class="p">,</span>
+
+<span class="s2">&quot;fg_high_black&quot;</span><span class="p">:</span>   <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[90m&quot;</span><span class="p">,</span>
+<span class="s2">&quot;fg_high_red&quot;</span><span class="p">:</span>     <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[91m&quot;</span><span class="p">,</span>
+<span class="s2">&quot;fg_high_green&quot;</span><span class="p">:</span>   <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[92m&quot;</span><span class="p">,</span>
+<span class="s2">&quot;fg_high_yellow&quot;</span><span class="p">:</span>  <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[93m&quot;</span><span class="p">,</span>
+<span class="s2">&quot;fg_high_blue&quot;</span><span class="p">:</span>    <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[94m&quot;</span><span class="p">,</span>
+<span class="s2">&quot;fg_high_magenta&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[95m&quot;</span><span class="p">,</span>
+<span class="s2">&quot;fg_high_cyan&quot;</span><span class="p">:</span>    <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[96m&quot;</span><span class="p">,</span>
+<span class="s2">&quot;fg_high_white&quot;</span><span class="p">:</span>   <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[97m&quot;</span><span class="p">,</span>
+
+<span class="s2">&quot;bg_high_black&quot;</span><span class="p">:</span>   <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[100m&quot;</span><span class="p">,</span>
+<span class="s2">&quot;bg_high_red&quot;</span><span class="p">:</span>     <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[101m&quot;</span><span class="p">,</span>
+<span class="s2">&quot;bg_high_green&quot;</span><span class="p">:</span>   <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[102m&quot;</span><span class="p">,</span>
+<span class="s2">&quot;bg_high_yellow&quot;</span><span class="p">:</span>  <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[103m&quot;</span><span class="p">,</span>
+<span class="s2">&quot;bg_high_blue&quot;</span><span class="p">:</span>    <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[104m&quot;</span><span class="p">,</span>
+<span class="s2">&quot;bg_high_magenta&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[105m&quot;</span><span class="p">,</span>
+<span class="s2">&quot;bg_high_cyan&quot;</span><span class="p">:</span>    <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[106m&quot;</span><span class="p">,</span>
+<span class="s2">&quot;bg_high_white&quot;</span><span class="p">:</span>   <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[107m&quot;</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="TerminalOutput"><a class="viewcode-back" href="../../../output/terminal.html#nuio.output.terminal.TerminalOutput">[docs]</a><span class="k">class</span> <span class="nc">TerminalOutput</span><span class="p">(</span><span class="n">BaseOutput</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Terminal output device.</span>
+<span class="sd">	Currently compatible to POSIX terminals.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">pass</span>
+	<span class="k">def</span> <span class="nf">print</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">sep</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="n">flush</span> <span class="o">=</span> <span class="bp">False</span><span class="p">):</span>
+		<span class="k">print</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="n">end</span><span class="p">,</span> <span class="n">sep</span> <span class="o">=</span> <span class="n">sep</span><span class="p">,</span> <span class="n">flush</span> <span class="o">=</span> <span class="n">flush</span><span class="p">)</span>
+
+	<span class="k">def</span> <span class="nf">print_autowrap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">sep</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="n">flush</span> <span class="o">=</span> <span class="bp">False</span><span class="p">):</span>
+		<span class="k">print</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="n">end</span><span class="p">,</span> <span class="n">sep</span> <span class="o">=</span> <span class="n">sep</span><span class="p">,</span> <span class="n">flush</span> <span class="o">=</span> <span class="n">flush</span><span class="p">)</span>
+
+<div class="viewcode-block" id="TerminalOutput.print_colored"><a class="viewcode-back" href="../../../output/terminal.html#nuio.output.terminal.TerminalOutput.print_colored">[docs]</a>	<span class="k">def</span> <span class="nf">print_colored</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">color</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">sep</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="n">flush</span> <span class="o">=</span> <span class="bp">False</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Print some colored text to the terminal. Actually you are able to</span>
+<span class="sd">		use any ASCII escape sequence.		</span>
+
+<span class="sd">		All colors are in the dict ``colors``. All used escape sequences are in ``ESCAPES``.</span>
+
+<span class="sd">		Returns: None</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">print</span><span class="p">(</span><span class="n">color</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+		<span class="k">print</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">sep</span> <span class="o">=</span> <span class="n">sep</span><span class="p">,</span> <span class="n">flush</span> <span class="o">=</span> <span class="n">flush</span><span class="p">)</span>
+		<span class="k">print</span><span class="p">(</span><span class="n">ESCAPES</span><span class="p">[</span><span class="s2">&quot;end&quot;</span><span class="p">],</span> <span class="n">end</span> <span class="o">=</span> <span class="n">end</span><span class="p">,</span> <span class="n">flush</span> <span class="o">=</span> <span class="n">flush</span><span class="p">)</span></div>
+<div class="viewcode-block" id="TerminalOutput.clear_line"><a class="viewcode-back" href="../../../output/terminal.html#nuio.output.terminal.TerminalOutput.clear_line">[docs]</a>	<span class="k">def</span> <span class="nf">clear_line</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		This is a brute force approach. It will put 100 &quot;\\\\b&quot; and</span>
+<span class="sd">		one &quot;\\\\r&quot; in the hope that it will be enough.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\b</span><span class="s2">&quot;</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+		<span class="k">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\r</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span></div>
+
+	<span class="k">def</span> <span class="nf">clear_chars</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">numchars</span><span class="p">):</span>
+		<span class="k">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\b</span><span class="s2">&quot;</span> <span class="o">*</span> <span class="n">numchars</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+	<span class="k">def</span> <span class="nf">line_up</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\r\033</span><span class="s2">[A&quot;</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span></div>
+		
+
+
+	
+<div class="viewcode-block" id="TerminalBlockOutput"><a class="viewcode-back" href="../../../output/terminal.html#nuio.output.terminal.TerminalBlockOutput">[docs]</a><span class="k">class</span> <span class="nc">TerminalBlockOutput</span><span class="p">(</span><span class="n">BaseBlockOutput</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	A block oriented output device with </span>
+<span class="sd">	``height`` lines and ``width`` characters.</span>
+
+<span class="sd">	*Note*: This buffers the complete output that might be visible.</span>
+<span class="sd">	If you want to clear this buffer, use ``TerminalBlockOutput.clear``.</span>
+<span class="sd">	To clear the screen without deleting the buffer use ``TerminalBlockOutput.clear_screen``.</span>
+
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">width</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">height</span> <span class="o">=</span> <span class="n">height</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="n">width</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">cursor</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">content</span> <span class="o">=</span> <span class="p">[]</span>
+<div class="viewcode-block" id="TerminalBlockOutput.print"><a class="viewcode-back" href="../../../output/terminal.html#nuio.output.terminal.TerminalBlockOutput.print">[docs]</a>	<span class="k">def</span> <span class="nf">print</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">sep</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="n">flush</span> <span class="o">=</span> <span class="bp">False</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Alias of print_autowrap.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">print_autowrap</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="n">end</span><span class="p">,</span> <span class="n">sep</span> <span class="o">=</span> <span class="n">sep</span><span class="p">,</span> <span class="n">flush</span> <span class="o">=</span> <span class="n">flush</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TerminalBlockOutput.print_autowrap"><a class="viewcode-back" href="../../../output/terminal.html#nuio.output.terminal.TerminalBlockOutput.print_autowrap">[docs]</a>	<span class="k">def</span> <span class="nf">print_autowrap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">sep</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="n">flush</span> <span class="o">=</span> <span class="bp">False</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		This will break lines, if they are too long</span>
+<span class="sd">		and scroll lines if there are too many lines for the </span>
+<span class="sd">		block.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">string</span> <span class="o">=</span> <span class="n">sep</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span> <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">args</span><span class="p">])</span> <span class="o">+</span> <span class="n">end</span>
+		<span class="n">lines</span> <span class="o">=</span> <span class="n">string</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+		<span class="n">wraped_lines</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
+			<span class="k">if</span><span class="p">(</span><span class="n">line</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">):</span>
+				<span class="k">continue</span>
+			<span class="k">while</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">):</span>
+				<span class="n">wraped_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">])</span>
+				<span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">:]</span>
+			<span class="n">wraped_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+		<span class="n">after</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">content</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">wraped_lines</span><span class="p">):]</span>
+		<span class="n">before</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">content</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">content</span> <span class="o">=</span> <span class="n">before</span> <span class="o">+</span> <span class="n">wraped_lines</span> <span class="o">+</span> <span class="n">after</span>
+		<span class="k">if</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">content</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">):</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">content</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">content</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">:</span> <span class="p">]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">clear_screen</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">content</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+		<span class="k">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">content</span><span class="p">),</span> <span class="n">flush</span> <span class="o">=</span> <span class="n">flush</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="n">end</span><span class="p">)</span>
+		<span class="k">if</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="ow">in</span> <span class="n">end</span><span class="p">):</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+=</span> <span class="n">end</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="TerminalBlockOutput.print_colored"><a class="viewcode-back" href="../../../output/terminal.html#nuio.output.terminal.TerminalBlockOutput.print_colored">[docs]</a>	<span class="k">def</span> <span class="nf">print_colored</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">color</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">sep</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="n">flush</span> <span class="o">=</span> <span class="bp">False</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Adds ``color`` and ``ESCAPES[&quot;end&quot;]`` to the args and invokes</span>
+<span class="sd">		print_autowrap.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">args</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+		<span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="n">color</span><span class="p">]</span> <span class="o">+</span> <span class="n">args</span> <span class="o">+</span> <span class="p">[</span><span class="n">ESCAPES</span><span class="p">[</span><span class="s2">&quot;end&quot;</span><span class="p">]]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">print_autowrap</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="n">end</span><span class="p">,</span> <span class="n">sep</span> <span class="o">=</span> <span class="n">sep</span><span class="p">,</span> <span class="n">flush</span> <span class="o">=</span> <span class="n">flush</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TerminalBlockOutput.clear_line"><a class="viewcode-back" href="../../../output/terminal.html#nuio.output.terminal.TerminalBlockOutput.clear_line">[docs]</a>	<span class="k">def</span> <span class="nf">clear_line</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Will clear the current line</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\b</span><span class="s2">&quot;</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">end</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span></div>
+
+	<span class="k">def</span> <span class="nf">clear_chars</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">numchars</span><span class="p">):</span>
+		<span class="k">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\b</span><span class="s2">&quot;</span> <span class="o">*</span> <span class="n">numchars</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-=</span> <span class="n">numchars</span>
+		<span class="k">if</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">):</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+<div class="viewcode-block" id="TerminalBlockOutput.clear"><a class="viewcode-back" href="../../../output/terminal.html#nuio.output.terminal.TerminalBlockOutput.clear">[docs]</a>	<span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Clear the complete block.</span>
+
+<span class="sd">		Returns: None</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">clear_screen</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">content</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">cursor</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span></div>
+<div class="viewcode-block" id="TerminalBlockOutput.goto_line"><a class="viewcode-back" href="../../../output/terminal.html#nuio.output.terminal.TerminalBlockOutput.goto_line">[docs]</a>	<span class="k">def</span> <span class="nf">goto_line</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lineno</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Go to line ``lineno``. Might raise an exception, if lineno is invalid.</span>
+<span class="sd">		Will place the cursor at the first character in this line to prevent </span>
+<span class="sd">		undefined behaviour.</span>
+
+<span class="sd">		Returns: None</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">if</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">lineno</span><span class="p">):</span>
+			<span class="k">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\r\n</span><span class="s2">&quot;</span> <span class="o">*</span> <span class="p">(</span><span class="n">lineno</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">end</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+		<span class="k">elif</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">lineno</span><span class="p">):</span>
+			<span class="k">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\r</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[A&quot;</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">lineno</span><span class="p">),</span> <span class="n">end</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+		<span class="k">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\r</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">lineno</span></div>
+
+<div class="viewcode-block" id="TerminalBlockOutput.clear_screen"><a class="viewcode-back" href="../../../output/terminal.html#nuio.output.terminal.TerminalBlockOutput.clear_screen">[docs]</a>	<span class="k">def</span> <span class="nf">clear_screen</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Clear the complete screen.</span>
+
+<span class="sd">		Returns: None</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\r</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[A&quot;</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">end</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+		<span class="k">print</span><span class="p">((</span> <span class="s2">&quot; &quot;</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">width</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="p">)</span><span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+		<span class="k">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\r</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[A&quot;</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">),</span> <span class="n">end</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span></div>
+	<span class="k">def</span> <span class="nf">line_up</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">goto_line</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span></div>
+
+	
+	
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Daniel Knüttel.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

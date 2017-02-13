@@ -1,0 +1,177 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>nuio.output.base &mdash; nuio 0.0.2a documentation</title>
+    
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.0.2a',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="nuio 0.0.2a documentation" href="../index.html" />
+    <link rel="up" title="nuio.output" href="../output.html" />
+    <link rel="next" title="nuio.output.terminal" href="terminal.html" />
+    <link rel="prev" title="nuio.output" href="../output.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-nuio.output.base">
+<span id="nuio-output-base"></span><h1>nuio.output.base<a class="headerlink" href="#module-nuio.output.base" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="nuio.output.base.BaseBlockOutput">
+<em class="property">class </em><code class="descclassname">nuio.output.base.</code><code class="descname">BaseBlockOutput</code><span class="sig-paren">(</span><em>height</em>, <em>width</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nuio/output/base.html#BaseBlockOutput"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nuio.output.base.BaseBlockOutput" title="Permalink to this definition">¶</a></dt>
+<dd><p>Used to display stuff in a block.
+Might be used to create screens.</p>
+<dl class="method">
+<dt id="nuio.output.base.BaseBlockOutput.clear">
+<code class="descname">clear</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nuio/output/base.html#BaseBlockOutput.clear"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nuio.output.base.BaseBlockOutput.clear" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clear the complete block.</p>
+<p>Returns: None</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="nuio.output.base.BaseBlockOutput.goto_line">
+<code class="descname">goto_line</code><span class="sig-paren">(</span><em>lineno</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nuio/output/base.html#BaseBlockOutput.goto_line"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nuio.output.base.BaseBlockOutput.goto_line" title="Permalink to this definition">¶</a></dt>
+<dd><p>Go to line <code class="docutils literal"><span class="pre">lineno</span></code>. Might raise an exception, if lineno is invalid.
+Will place the cursor at the first character in this line to prevent 
+undefined behaviour.</p>
+<p>Returns: None</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="nuio.output.base.BaseOutput">
+<em class="property">class </em><code class="descclassname">nuio.output.base.</code><code class="descname">BaseOutput</code><a class="reference internal" href="../_modules/nuio/output/base.html#BaseOutput"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nuio.output.base.BaseOutput" title="Permalink to this definition">¶</a></dt>
+<dd><p>Basic output class.</p>
+<dl class="method">
+<dt id="nuio.output.base.BaseOutput.clear_chars">
+<code class="descname">clear_chars</code><span class="sig-paren">(</span><em>numchars</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nuio/output/base.html#BaseOutput.clear_chars"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nuio.output.base.BaseOutput.clear_chars" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clear numchars characters. Cannot be used to clear multiple lines.</p>
+<p>Returns: None</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="nuio.output.base.BaseOutput.clear_line">
+<code class="descname">clear_line</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nuio/output/base.html#BaseOutput.clear_line"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nuio.output.base.BaseOutput.clear_line" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clear the current line. Cannot be used to clear multiple lines.
+Might be done using &#8220;\b&#8221; or &#8220;\r&#8221; in terminals.</p>
+<p>Returns: None</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="nuio.output.base.BaseOutput.line_up">
+<code class="descname">line_up</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nuio/output/base.html#BaseOutput.line_up"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nuio.output.base.BaseOutput.line_up" title="Permalink to this definition">¶</a></dt>
+<dd><p>Goes one line up.</p>
+<p>Returns: None</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="nuio.output.base.BaseOutput.print">
+<code class="descname">print</code><span class="sig-paren">(</span><em>*args</em>, <em>end='\n'</em>, <em>sep=' '</em>, <em>flush=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nuio/output/base.html#BaseOutput.print"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nuio.output.base.BaseOutput.print" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print the <code class="docutils literal"><span class="pre">*args</span></code> to the output device.
+Flush might be ignored.</p>
+<p>Returns: None</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="nuio.output.base.BaseOutput.print_autowrap">
+<code class="descname">print_autowrap</code><span class="sig-paren">(</span><em>*args</em>, <em>end='\n'</em>, <em>sep=' '</em>, <em>flush=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nuio/output/base.html#BaseOutput.print_autowrap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nuio.output.base.BaseOutput.print_autowrap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print string to the output device. Wrap the string automatically.
+Might default to print in terminals.</p>
+<p>Returns: None</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="nuio.output.base.BaseOutput.print_colored">
+<code class="descname">print_colored</code><span class="sig-paren">(</span><em>color</em>, <em>*args</em>, <em>end='\n'</em>, <em>sep=' '</em>, <em>flush=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nuio/output/base.html#BaseOutput.print_colored"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nuio.output.base.BaseOutput.print_colored" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print some colored text. Might support other markup features, too.</p>
+<p>Returns: None</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../output.html">nuio.output</a><ul>
+      <li>Previous: <a href="../output.html" title="previous chapter">nuio.output</a></li>
+      <li>Next: <a href="terminal.html" title="next chapter">nuio.output.terminal</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/output/base.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Daniel Knüttel.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
+      
+      |
+      <a href="../_sources/output/base.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

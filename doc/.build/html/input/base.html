@@ -1,0 +1,201 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>nuio.input.base &mdash; nuio 0.0.2a documentation</title>
+    
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.0.2a',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="nuio 0.0.2a documentation" href="../index.html" />
+    <link rel="up" title="nuio.input" href="../input.html" />
+    <link rel="next" title="nuio.input.terminal" href="terminal.html" />
+    <link rel="prev" title="nuio.input" href="../input.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-nuio.input.base">
+<span id="nuio-input-base"></span><h1>nuio.input.base<a class="headerlink" href="#module-nuio.input.base" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="nuio.input.base.BaseInput">
+<em class="property">class </em><code class="descclassname">nuio.input.base.</code><code class="descname">BaseInput</code><span class="sig-paren">(</span><em>output</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nuio/input/base.html#BaseInput"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nuio.input.base.BaseInput" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base input class. Used to get user input.</p>
+<p>output is used to prompt the user for input.</p>
+<p>output might be an instance of nuio.output.base.BaseOutput
+or a simple instance like that:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">OutputDevice</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="gp">... </span>            <span class="k">pass</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="nf">print</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="gp">... </span>            <span class="k">print</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kw_args</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="nf">line_up</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="gp">... </span>            <span class="k">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\r\033</span><span class="s2">[A&quot;</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="nuio.input.base.BaseInput.get_char">
+<code class="descname">get_char</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nuio/input/base.html#BaseInput.get_char"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nuio.input.base.BaseInput.get_char" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get an input character. Wait for the user to finish the input.
+This might require a terminal &#8216;\n&#8217;.</p>
+<p>Returns: the character</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="nuio.input.base.BaseInput.get_char_noblock">
+<code class="descname">get_char_noblock</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nuio/input/base.html#BaseInput.get_char_noblock"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nuio.input.base.BaseInput.get_char_noblock" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get an input character. Do not wait for the user to finish the input.
+Might set the terminal to <code class="docutils literal"><span class="pre">~ICANON</span></code> and <code class="docutils literal"><span class="pre">~ECHO</span></code>.
+This will return the first character.</p>
+<p>Returns: character or None</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="nuio.input.base.BaseInput.get_last_char_noblock">
+<code class="descname">get_last_char_noblock</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nuio/input/base.html#BaseInput.get_last_char_noblock"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nuio.input.base.BaseInput.get_last_char_noblock" title="Permalink to this definition">¶</a></dt>
+<dd><p>Just like get_char_noblock, but this will return the last character.</p>
+<p>Returns: character or None</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="nuio.input.base.BaseInput.get_string">
+<code class="descname">get_string</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nuio/input/base.html#BaseInput.get_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nuio.input.base.BaseInput.get_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get an input string. Wait for the user to finish the input.</p>
+<p>Returns: the string</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="nuio.input.base.BaseInput.input_char">
+<code class="descname">input_char</code><span class="sig-paren">(</span><em>prompt=''</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nuio/input/base.html#BaseInput.input_char"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nuio.input.base.BaseInput.input_char" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prompt the user to enter a character.</p>
+<p>Returns: the character</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="nuio.input.base.BaseInput.input_float">
+<code class="descname">input_float</code><span class="sig-paren">(</span><em>prompt=''</em>, <em>range=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nuio/input/base.html#BaseInput.input_float"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nuio.input.base.BaseInput.input_float" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prompt the User to enter a float.
+It will loop until the entered float is valid.</p>
+<p>Returns: the float</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="nuio.input.base.BaseInput.input_int">
+<code class="descname">input_int</code><span class="sig-paren">(</span><em>prompt=''</em>, <em>range=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nuio/input/base.html#BaseInput.input_int"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nuio.input.base.BaseInput.input_int" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prompt the user to enter an integer.
+It will loop until the entered integer is valid.</p>
+<p>Returns: the integer</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="nuio.input.base.BaseInput.input_string">
+<code class="descname">input_string</code><span class="sig-paren">(</span><em>prompt=''</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nuio/input/base.html#BaseInput.input_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nuio.input.base.BaseInput.input_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prompt the user to enter a string.</p>
+<p>Returns: the string</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="nuio.input.base.BaseInput.input_type">
+<code class="descname">input_type</code><span class="sig-paren">(</span><em>constructor</em>, <em>prompt=''</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nuio/input/base.html#BaseInput.input_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nuio.input.base.BaseInput.input_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Promt the user to enter a custom type.
+This will loop until the constructor returns
+something not-None and raises no exceptions.</p>
+<p>Example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">i</span> <span class="o">=</span> <span class="n">BaseInput</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">get_positive_integer</span><span class="p">(</span><span class="n">string</span><span class="p">):</span>
+<span class="go">        i = int(string)</span>
+<span class="go">        if(i &gt; 0):</span>
+<span class="go">                return i</span>
+<span class="go">        return None</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">i</span><span class="o">.</span><span class="n">input_type</span><span class="p">(</span><span class="n">get_positive_integer</span><span class="p">,</span> <span class="n">prompt</span> <span class="o">=</span> <span class="s2">&quot;enter a positive integer &gt; &quot;</span><span class="p">)</span>  
+</pre></div>
+</div>
+<p>Returns: Instance of the custom type</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../input.html">nuio.input</a><ul>
+      <li>Previous: <a href="../input.html" title="previous chapter">nuio.input</a></li>
+      <li>Next: <a href="terminal.html" title="next chapter">nuio.input.terminal</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/input/base.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Daniel Knüttel.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
+      
+      |
+      <a href="../_sources/input/base.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

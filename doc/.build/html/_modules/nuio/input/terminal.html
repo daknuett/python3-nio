@@ -1,0 +1,261 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>nuio.input.terminal &mdash; nuio 0.0.2a documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.0.2a',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="nuio 0.0.2a documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for nuio.input.terminal</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/python3</span>
+
+<span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">BaseInput</span>
+<span class="kn">import</span> <span class="nn">termios</span><span class="o">,</span> <span class="nn">sys</span><span class="o">,</span> <span class="nn">concurrent</span><span class="o">,</span> <span class="nn">asyncio</span>
+
+
+<div class="viewcode-block" id="POSIXTerminalInput"><a class="viewcode-back" href="../../../input/terminal.html#nuio.input.terminal.POSIXTerminalInput">[docs]</a><span class="k">class</span> <span class="nc">POSIXTerminalInput</span><span class="p">(</span><span class="n">BaseInput</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Get input from a POSIX Terminal/Shell.</span>
+<span class="sd">	This requires that the terminal can be set to ~ICANON and ~ECHO</span>
+<span class="sd">	by using termios.</span>
+
+<span class="sd">	Some methods will set the correct terminal settings automatically,</span>
+<span class="sd">	anyways you should set them manually at first.</span>
+
+<span class="sd">	All input_* methods, get_string and get_char will require ICANON and ECHO to be set.</span>
+<span class="sd">	To prevent unpredictable behaviour you should ``reset_tc_attrs``</span>
+<span class="sd">	before running them.</span>
+
+<span class="sd">	get_char_noblock and get_last_char_noblock will require ~ICANON.</span>
+<span class="sd">	You should ensure to turn it off after you called them if you need</span>
+<span class="sd">	ICANON.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output</span><span class="p">):</span>
+
+		<span class="n">BaseInput</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">stdin_fd</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdin</span><span class="o">.</span><span class="n">fileno</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_reset_tc_attr</span> <span class="o">=</span> <span class="n">termios</span><span class="o">.</span><span class="n">tcgetattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stdin_fd</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">tc_attr</span> <span class="o">=</span> <span class="n">termios</span><span class="o">.</span><span class="n">tcgetattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stdin_fd</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">stdin</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdin</span>		
+	
+<div class="viewcode-block" id="POSIXTerminalInput.set_noICANON"><a class="viewcode-back" href="../../../input/terminal.html#nuio.input.terminal.POSIXTerminalInput.set_noICANON">[docs]</a>	<span class="k">def</span> <span class="nf">set_noICANON</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Disable ICANON in the terminal</span>
+
+<span class="sd">		Returns: None</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">tc_attr</span> <span class="o">=</span> <span class="n">termios</span><span class="o">.</span><span class="n">tcgetattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stdin_fd</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">tc_attr</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tc_attr</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">termios</span><span class="o">.</span><span class="n">ICANON</span>
+		<span class="n">termios</span><span class="o">.</span><span class="n">tcsetattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stdin_fd</span><span class="p">,</span> <span class="n">termios</span><span class="o">.</span><span class="n">TCSANOW</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tc_attr</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="POSIXTerminalInput.set_noECHO"><a class="viewcode-back" href="../../../input/terminal.html#nuio.input.terminal.POSIXTerminalInput.set_noECHO">[docs]</a>	<span class="k">def</span> <span class="nf">set_noECHO</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Disable ECHO in the terminal</span>
+
+<span class="sd">		Returns: None</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		
+		<span class="bp">self</span><span class="o">.</span><span class="n">tc_attr</span> <span class="o">=</span> <span class="n">termios</span><span class="o">.</span><span class="n">tcgetattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stdin_fd</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">tc_attr</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tc_attr</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">termios</span><span class="o">.</span><span class="n">ECHO</span>
+		<span class="n">termios</span><span class="o">.</span><span class="n">tcsetattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stdin_fd</span><span class="p">,</span> <span class="n">termios</span><span class="o">.</span><span class="n">TCSANOW</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tc_attr</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="POSIXTerminalInput.reset_tc_attrs"><a class="viewcode-back" href="../../../input/terminal.html#nuio.input.terminal.POSIXTerminalInput.reset_tc_attrs">[docs]</a>	<span class="k">def</span> <span class="nf">reset_tc_attrs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Reset the terminal settings to the original settings</span>
+
+<span class="sd">		Returns: None</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">termios</span><span class="o">.</span><span class="n">tcsetattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stdin_fd</span><span class="p">,</span> <span class="n">termios</span><span class="o">.</span><span class="n">TCSANOW</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reset_tc_attr</span><span class="p">)</span></div>
+	
+
+<div class="viewcode-block" id="POSIXTerminalInput.get_string"><a class="viewcode-back" href="../../../input/terminal.html#nuio.input.terminal.POSIXTerminalInput.get_string">[docs]</a>	<span class="n">async</span> <span class="k">def</span> <span class="nf">get_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Resets the terminal attributes and returns input()</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">reset_tc_attrs</span><span class="p">()</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">stdin</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span></div>
+
+	<span class="n">async</span> <span class="k">def</span> <span class="nf">get_char</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">stdin</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+<div class="viewcode-block" id="POSIXTerminalInput.get_char_noblock"><a class="viewcode-back" href="../../../input/terminal.html#nuio.input.terminal.POSIXTerminalInput.get_char_noblock">[docs]</a>	<span class="k">def</span> <span class="nf">get_char_noblock</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Sets ~ICANON and reads one char nonblocking.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">set_noICANON</span><span class="p">()</span>
+
+		<span class="c1"># we need to run this in a coroutine...</span>
+		<span class="c1"># A timeout for the read function</span>
+		<span class="n">timeout</span> <span class="o">=</span> <span class="mf">0.002</span>
+		<span class="n">loop</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">get_event_loop</span><span class="p">()</span>
+		<span class="n">future</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">wait_for</span><span class="p">(</span><span class="n">loop</span><span class="o">.</span><span class="n">run_in_executor</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">stdin</span><span class="o">.</span><span class="n">read</span><span class="p">,</span> <span class="n">i</span><span class="p">),</span> <span class="n">timeout</span><span class="p">)</span>
+
+		<span class="k">try</span><span class="p">:</span>
+			<span class="k">return</span> <span class="n">loop</span><span class="o">.</span><span class="n">run_until_complete</span><span class="p">(</span><span class="n">future</span><span class="p">)</span>
+		<span class="k">except</span><span class="p">:</span>
+			<span class="k">return</span> <span class="bp">None</span></div>
+
+<div class="viewcode-block" id="POSIXTerminalInput.get_last_char_noblock"><a class="viewcode-back" href="../../../input/terminal.html#nuio.input.terminal.POSIXTerminalInput.get_last_char_noblock">[docs]</a>	<span class="k">def</span> <span class="nf">get_last_char_noblock</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Sets ~ICANON and reads the last entered char nonblocking.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">set_noICANON</span><span class="p">()</span>
+		<span class="n">one_read</span> <span class="o">=</span> <span class="bp">False</span>
+		<span class="n">char</span> <span class="o">=</span> <span class="bp">None</span>
+		<span class="n">last_char</span> <span class="o">=</span> <span class="bp">None</span>
+		<span class="k">while</span><span class="p">(</span><span class="ow">not</span> <span class="n">one_read</span> <span class="ow">and</span> <span class="n">char</span> <span class="o">!=</span> <span class="bp">None</span><span class="p">):</span>
+			<span class="n">one_read</span> <span class="o">=</span> <span class="bp">True</span>
+			<span class="n">last_char</span> <span class="o">=</span> <span class="n">char</span>
+			<span class="n">char</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_char_noblock</span><span class="p">()</span>
+
+		<span class="k">return</span> <span class="n">last_char</span></div>
+
+	<span class="n">async</span> <span class="k">def</span> <span class="nf">input_char</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prompt</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="k">print</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">flush</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
+		<span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stdin</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">line_up</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="k">print</span><span class="p">(</span><span class="n">prompt</span> <span class="o">+</span> <span class="n">res</span><span class="p">,</span> <span class="n">flush</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">res</span>
+
+<div class="viewcode-block" id="POSIXTerminalInput.input_string"><a class="viewcode-back" href="../../../input/terminal.html#nuio.input.terminal.POSIXTerminalInput.input_string">[docs]</a>	<span class="n">async</span> <span class="k">def</span> <span class="nf">input_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prompt</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Sets ICANON and ECHO and prompts the user to enter a string.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">reset_tc_attrs</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="k">print</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">flush</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
+		<span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stdin</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">line_up</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="k">print</span><span class="p">(</span><span class="n">prompt</span> <span class="o">+</span> <span class="n">res</span><span class="p">,</span> <span class="n">flush</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">res</span></div>
+<div class="viewcode-block" id="POSIXTerminalInput.input_int"><a class="viewcode-back" href="../../../input/terminal.html#nuio.input.terminal.POSIXTerminalInput.input_int">[docs]</a>	<span class="n">async</span> <span class="k">def</span> <span class="nf">input_int</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prompt</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="nb">range</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Uses input_string internally.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		
+		<span class="k">def</span> <span class="nf">is_valid</span><span class="p">(</span><span class="n">integer</span><span class="p">,</span> <span class="nb">range</span><span class="p">):</span>
+			<span class="k">if</span><span class="p">(</span><span class="n">integer</span> <span class="o">==</span> <span class="bp">None</span><span class="p">):</span>
+				<span class="k">return</span> <span class="bp">False</span>
+			<span class="k">if</span><span class="p">(</span><span class="nb">range</span> <span class="o">==</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">integer</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">):</span>
+				<span class="k">return</span> <span class="bp">True</span>
+			<span class="k">return</span> <span class="bp">False</span>
+
+		<span class="n">integer</span> <span class="o">=</span> <span class="bp">None</span>
+		<span class="k">while</span><span class="p">(</span><span class="ow">not</span> <span class="n">is_valid</span><span class="p">(</span><span class="n">integer</span><span class="p">,</span> <span class="nb">range</span><span class="p">)):</span>
+			<span class="n">string</span> <span class="o">=</span> <span class="n">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_string</span><span class="p">(</span><span class="n">prompt</span> <span class="o">=</span> <span class="n">prompt</span><span class="p">)</span>
+			<span class="k">try</span><span class="p">:</span>
+				<span class="n">integer</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+			<span class="k">except</span><span class="p">:</span>
+				<span class="k">continue</span>
+		<span class="k">return</span> <span class="n">integer</span></div>
+
+<div class="viewcode-block" id="POSIXTerminalInput.input_float"><a class="viewcode-back" href="../../../input/terminal.html#nuio.input.terminal.POSIXTerminalInput.input_float">[docs]</a>	<span class="n">async</span> <span class="k">def</span> <span class="nf">input_float</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prompt</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="nb">range</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Uses input_string internally.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		
+		<span class="k">def</span> <span class="nf">is_valid</span><span class="p">(</span><span class="n">Float</span><span class="p">,</span> <span class="nb">range</span><span class="p">):</span>
+			<span class="k">if</span><span class="p">(</span><span class="n">Float</span> <span class="o">==</span> <span class="bp">None</span><span class="p">):</span>
+				<span class="k">return</span> <span class="bp">False</span>
+			<span class="k">if</span><span class="p">(</span><span class="nb">range</span> <span class="o">==</span> <span class="bp">None</span> <span class="ow">or</span> <span class="p">(</span> <span class="nb">range</span><span class="o">.</span><span class="n">start</span> <span class="o">&lt;</span> <span class="n">Float</span> <span class="o">&lt;</span> <span class="nb">range</span><span class="o">.</span><span class="n">stop</span><span class="p">)):</span>
+				<span class="k">return</span> <span class="bp">True</span>
+			<span class="k">return</span> <span class="bp">False</span>
+
+		<span class="n">Float</span> <span class="o">=</span> <span class="bp">None</span>
+		<span class="k">while</span><span class="p">(</span><span class="ow">not</span> <span class="n">is_valid</span><span class="p">(</span><span class="n">Float</span><span class="p">,</span> <span class="nb">range</span><span class="p">)):</span>
+			<span class="n">string</span> <span class="o">=</span> <span class="n">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_string</span><span class="p">(</span><span class="n">prompt</span> <span class="o">=</span> <span class="n">prompt</span><span class="p">)</span>
+			<span class="k">try</span><span class="p">:</span>
+				<span class="n">Float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+			<span class="k">except</span><span class="p">:</span>
+				<span class="k">continue</span>
+		<span class="k">return</span> <span class="n">Float</span></div>
+
+	<span class="n">async</span> <span class="k">def</span> <span class="nf">input_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">constructor</span><span class="p">,</span> <span class="n">prompt</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">):</span>	
+		<span class="n">result</span> <span class="o">=</span> <span class="bp">None</span>
+		<span class="k">while</span><span class="p">(</span><span class="ow">not</span> <span class="n">result</span><span class="p">):</span>
+			<span class="n">string</span> <span class="o">=</span> <span class="n">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_string</span><span class="p">(</span><span class="n">prompt</span> <span class="o">=</span> <span class="n">prompt</span><span class="p">)</span>
+			<span class="k">try</span><span class="p">:</span>
+				<span class="n">result</span> <span class="o">=</span> <span class="n">constructor</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+			<span class="k">except</span><span class="p">:</span>
+				<span class="k">continue</span>
+		<span class="k">return</span> <span class="n">result</span></div>
+	
+	
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Daniel Knüttel.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
