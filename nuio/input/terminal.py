@@ -65,7 +65,7 @@ class POSIXTerminalInput(BaseInput):
 		Resets the terminal attributes and returns input()
 		"""
 		self.reset_tc_attrs()
-		return self.stdin.readline()
+		return self.stdin.readline()[:-1]
 
 	async def get_char(self):
 		return self.stdin.read(1)
@@ -116,6 +116,8 @@ class POSIXTerminalInput(BaseInput):
 		self.reset_tc_attrs()
 		self.output.print(prompt, end = "", flush = True)
 		res = self.stdin.readline()
+		# strip the trailing \n. Took me about 5h of debugging (-.-)
+		res = res[:-1]
 		self.output.line_up()
 		self.output.print(prompt + res, flush = True)
 		return res
